@@ -1,8 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "sToXfwTuJzFL7Mbiz6YQ8ke/69j0cx/z6DI8fhg7/8hoAbmH5wroKp/iNYLLCLrR+I+sy/fvr1HEeH1G09XN7g==",
+  "dgSpecHash": "Nv5oaIUpAXHrxtLsVBo4v+zKJWqvSObWP+ToqK5pFG+evZGCOsCTEckdkaAs9YO3Hcr8qiGhrkNAgju8ejELag==",
   "success": true,
   "projectFilePath": "C:\\Github\\BlocklandHeightmapGenerator\\Blockland Heightmap Generator\\Blockland Heightmap Generator\\Blockland Heightmap Generator.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\LoneA\\.nuget\\packages\\microsoft.netcore.platforms\\3.1.0\\microsoft.netcore.platforms.3.1.0.nupkg.sha512",
+    "C:\\Users\\LoneA\\.nuget\\packages\\microsoft.win32.systemevents\\4.7.0\\microsoft.win32.systemevents.4.7.0.nupkg.sha512",
+    "C:\\Users\\LoneA\\.nuget\\packages\\system.drawing.common\\4.7.0\\system.drawing.common.4.7.0.nupkg.sha512"
+  ],
   "logs": []
 }

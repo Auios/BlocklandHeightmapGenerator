@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Threading;
 
 // In order to use the 'Bitmap' class you need to include the 'System.Drawing.Common' class from the NuGet manager.
 // This solution should already have it included.
@@ -35,7 +36,7 @@ namespace Blockland_Heightmap_Generator
             }
             else
             {
-                Console.WriteLine("Failed to find either input or output directory.\nCreating them...");
+                Console.WriteLine("Failed to find either the input or output directory.\nCreating them...");
                 try
                 {
                     // Let me help you with that
@@ -70,38 +71,48 @@ namespace Blockland_Heightmap_Generator
                 {
                     if(Path.GetExtension(filename) == ".bmp") // FOR ALL THE .bmp FILES I SAID!
                     {
-                        string outputFilename = $"{Path.GetFileNameWithoutExtension(filename)}.bls"; // Output filename
-                        Bitmap bmp = new Bitmap($"{inputDirectory}/{filename}");
-                        int size = bmp.Width * bmp.Height; // Size is the brick count
-
-                        // Let me tell you a bit about myself. I'm...
-                        Console.WriteLine($"Name: '{outputFilename}'");
-                        Console.WriteLine($"Size: {size}");
-                        if(size >= 250000)
-                            Console.WriteLine($"That's {size - 250000} bricks over 250,000!");
-                        else
-                            Console.WriteLine($"That's {250000 - size} bricks under 250,000");
-
-                        // Now for the real shit we are here for
-                        List<string> blsFileData = GenerateBlsHeader(filename, size);
-                        for(int y = 0; y < bmp.Height; y++)
+                        try
                         {
-                            for(int x = 0; x < bmp.Width; x++)
+                            string outputFilename = $"{Path.GetFileNameWithoutExtension(filename)}.bls"; // Output filename
+                            Bitmap bmp = new Bitmap($"{inputDirectory}/{filename}");
+                            int size = bmp.Width * bmp.Height; // Size is the brick count
+
+                            // Let me tell you a bit about myself. I'm...
+                            Console.WriteLine($"\nName: '{outputFilename}'");
+                            Console.WriteLine($"Size: {size}");
+                            if (size >= 250000)
+                                Console.WriteLine($"That's {size - 250000} bricks over 250,000!");
+                            else
+                                Console.WriteLine($"That's {250000 - size} bricks under 250,000");
+
+                            // Now for the real shit we are here for
+                            List<string> blsFileData = GenerateBlsHeader(filename, size);
+                            for (int y = 0; y < bmp.Height; y++)
                             {
-                                float height = bmp.GetPixel(x, y).R;
-                                height *= heightMultiplier;
-                                blsFileData.Add(GenerateBrick(x, y, height));
+                                for (int x = 0; x < bmp.Width; x++)
+                                {
+                                    float height = bmp.GetPixel(x, y).R;
+                                    height *= heightMultiplier;
+                                    blsFileData.Add(GenerateBrick(x, y, height));
+                                }
                             }
-                        }
 
-                        // Write the data to a file
-                        TextWriter writer = new StreamWriter($"{outputDirectory}/{outputFilename}");
-                        foreach(string line in blsFileData)
-                        {
-                            writer.WriteLine(line);
+                            // Write the data to a file
+                            TextWriter writer = new StreamWriter($"{outputDirectory}/{outputFilename}");
+                            foreach (string line in blsFileData)
+                            {
+                                writer.WriteLine(line);
+                            }
+                            writer.Close();
+                            Console.WriteLine("Finished!\n");
                         }
-                        writer.Close();
-                        Console.WriteLine("Finished!");
+                        catch(Exception e)
+                        {
+                            // Either some bad input file or something went wrong while writing the file
+                            Console.WriteLine(e.Message);
+                            Console.WriteLine("Press enter to continue.");
+                            Console.ReadLine();
+                        }
                     }
                     else // Uncool file detected. smh...
                     {
@@ -109,7 +120,7 @@ namespace Blockland_Heightmap_Generator
                         continue;
                     }
                 }
-                Console.WriteLine("No more input files found...");
+                Console.WriteLine("\nNo more input files found...");
             }
             else
             {
@@ -123,9 +134,10 @@ namespace Blockland_Heightmap_Generator
 
         static void Quit()
         {
-            // Only quitters come here.
-            Console.ReadLine();
-            return;
+            // Only quitters come here
+            Console.WriteLine("Press any key to close the program.");
+            Console.ReadKey();
+            Environment.Exit(0);
         }
 
         private static string GenerateBrick(int x, int y, float height)

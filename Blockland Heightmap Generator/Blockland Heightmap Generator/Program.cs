@@ -15,12 +15,13 @@ namespace Blockland_Heightmap_Generator
         // Constants
         const string inputDirectory = "input";
         const string outputDirectory = "output";
+        const int defaultModifier = 100;
 
         static void Main(string[] args)
         {
             // Main variables
             string[] inputFiles = null;
-            float heightMultiplier = 1.0f;
+            float heightMultiplier = 1.0f/ defaultModifier;
             
             // Make sure the user isn't a big ol' dummy...
             if(Directory.Exists(inputDirectory) && Directory.Exists(outputDirectory))
@@ -53,15 +54,30 @@ namespace Blockland_Heightmap_Generator
             }
             // You passed the first dummy test!
 
+            // Clear out anything in the output directory.
+            foreach(string filename in Directory.GetFiles(outputDirectory))
+            {
+                File.Delete(filename);
+            }
+            Console.ReadKey();
+
             // Collect user input(s)
             bool inputValid = false;
             while(!inputValid)
             {
-                Console.WriteLine("Set height multiplier. (float)");
+                Console.WriteLine($"Enter height multiplier (default = {1.0f / defaultModifier})");
                 Console.WriteLine("Input:");
                 string input = Console.ReadLine();
-                if(float.TryParse(input, out heightMultiplier))
+                if (input == string.Empty)
+                {
                     inputValid = true;
+                }
+                else
+                {
+                    if (float.TryParse(input, out heightMultiplier))
+                        inputValid = true;
+                }
+                Console.WriteLine($"Set multiplier to: {heightMultiplier}");
             }
             // You passed the second dummy test!
 
@@ -74,11 +90,12 @@ namespace Blockland_Heightmap_Generator
                         try
                         {
                             string outputFilename = $"{Path.GetFileNameWithoutExtension(filename)}.bls"; // Output filename
-                            Bitmap bmp = new Bitmap($"{inputDirectory}/{filename}");
+                            Bitmap bmp = new Bitmap($"{filename}");
                             int size = bmp.Width * bmp.Height; // Size is the brick count
 
                             // Let me tell you a bit about myself. I'm...
                             Console.WriteLine($"\nName: '{outputFilename}'");
+                            Console.WriteLine($"Dimensions: {bmp.Width}x{bmp.Height}");
                             Console.WriteLine($"Size: {size}");
                             if (size >= 250000)
                                 Console.WriteLine($"That's {size - 250000} bricks over 250,000!");
@@ -86,6 +103,7 @@ namespace Blockland_Heightmap_Generator
                                 Console.WriteLine($"That's {250000 - size} bricks under 250,000");
 
                             // Now for the real shit we are here for
+                            Console.WriteLine("Generating...");
                             List<string> blsFileData = GenerateBlsHeader(filename, size);
                             for (int y = 0; y < bmp.Height; y++)
                             {
@@ -98,7 +116,8 @@ namespace Blockland_Heightmap_Generator
                             }
 
                             // Write the data to a file
-                            TextWriter writer = new StreamWriter($"{outputDirectory}/{outputFilename}");
+                            Console.WriteLine("Writing...");
+                            TextWriter writer = new StreamWriter($"{outputDirectory}\\{outputFilename}");
                             foreach (string line in blsFileData)
                             {
                                 writer.WriteLine(line);

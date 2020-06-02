@@ -15,7 +15,7 @@ namespace Blockland_Heightmap_Generator
         // Constants
         const string inputDirectory = "input";
         const string outputDirectory = "output";
-        const int defaultModifier = 100;
+        const int defaultModifier = 10;
 
         static void Main(string[] args)
         {
@@ -59,7 +59,6 @@ namespace Blockland_Heightmap_Generator
             {
                 File.Delete(filename);
             }
-            Console.ReadKey();
 
             // Collect user input(s)
             bool inputValid = false;
@@ -97,6 +96,8 @@ namespace Blockland_Heightmap_Generator
                             Console.WriteLine($"\nName: '{outputFilename}'");
                             Console.WriteLine($"Dimensions: {bmp.Width}x{bmp.Height}");
                             Console.WriteLine($"Size: {size}");
+
+                            // 250,000 bricks takes my AMD Ryzen 9 3950X 16-Core Processor (3.5Ghz) apprx 40 seconds to load all the bricks.
                             if (size >= 250000)
                                 Console.WriteLine($"That's {size - 250000} bricks over 250,000!");
                             else
@@ -148,7 +149,7 @@ namespace Blockland_Heightmap_Generator
                 Console.WriteLine("(You shouldn't be here... What did you do?)");
             }
 
-            Quit();
+            Quit(); // Bye, thanks for playing!
         }
 
         static void Quit()
